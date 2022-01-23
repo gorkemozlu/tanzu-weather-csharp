@@ -1,9 +1,9 @@
 load('.tanzu/tanzu_tilt_extensions.py', 'tanzu_k8s_yaml')
 
 
-SOURCE_IMAGE = os.getenv("SOURCE_IMAGE", default='registry.gcp.ellin.net/tapb3/tanzu-weather-source')
+SOURCE_IMAGE = os.getenv("SOURCE_IMAGE", default='harbor.dorn.gorke.ml/tap/tanzu-weather-source')
 LOCAL_PATH = os.getenv("LOCAL_PATH", default='.')
-
+NAMESPACE = os.getenv("NAMESPACE", default='dev')
 local_resource(
       'build',
       'dotnet publish src --configuration Release --runtime ubuntu.18.04-x64 --self-contained false --output ./build',
@@ -11,9 +11,10 @@ local_resource(
       ignore=['src/bin','src/obj']
 )
 
-custom_build('registry.gcp.ellin.net/tapb3/tanzu-weather',
-    "tanzu apps workload apply -f config/workload.yaml --live-update \
-      --local-path " + LOCAL_PATH + " --source-image " + SOURCE_IMAGE + " --yes && \
+custom_build('harbor.dorn.gorke.ml/tap/tanzu-weather',
+    "tanzu apps workload apply -f config/workload.yaml --live-update" +
+    " --namespace " + NAMESPACE +
+    " --local-path " + LOCAL_PATH + " --source-image " + SOURCE_IMAGE + " --yes && \
     .tanzu/wait.sh tanzu-weather",
   ['./build'],
   live_update = [ 
@@ -23,6 +24,5 @@ custom_build('registry.gcp.ellin.net/tapb3/tanzu-weather',
   skips_local_docker=True
   
 )
-allow_k8s_contexts('tapb4-admin@tapb4')
-allow_k8s_contexts('tap-beta3-admin@tap-beta3')
-tanzu_k8s_yaml('tanzu-weather', 'registry.gcp.ellin.net/tapb3/tanzu-weather', './config/workload.yaml')
+allow_k8s_contexts('gke_gorkemozlu_europe-central2-c_tap-gke02')
+tanzu_k8s_yaml('tanzu-weather', 'harbor.dorn.gorke.ml/tap/tanzu-weather', './config/workload.yaml')

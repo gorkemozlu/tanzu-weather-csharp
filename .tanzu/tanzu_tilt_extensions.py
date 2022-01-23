@@ -7,6 +7,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {workload}-proxy
+  namespace: dev
   annotations:
     run-image: {run_image}
 """

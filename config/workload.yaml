@@ -2,15 +2,16 @@ apiVersion: carto.run/v1alpha1
 kind: Workload
 metadata:
   name: tanzu-weather
+  namespace: dev
   labels:
     apps.tanzu.vmware.com/workload-type: web-bp
     app.kubernetes.io/part-of: tanzu-weather
 spec:
   params:
     - name: run-image
-      value: registry.gcp.ellin.net/tanzu-weather
+      value: harbor.dorn.gorke.ml/tap/tanzu-weather
   source:
     git:
-      url: https://github.com/jeffellin/tanzu-weather
+      url: https://github.com/gorkemozlu/tanzu-weather-csharp
       ref:
         branch: main
